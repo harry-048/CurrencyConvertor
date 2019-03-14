@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     double n =1;
     Spinner spTo;
     Spinner spFrom;
+    String num="1";
 
     ArrayAdapter<String> adpTo;
     // ArrayAdapter<String> adpFrom;
@@ -255,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 editCurrency.setText("" + cval+spFrom.getSelectedItem().toString());
+                txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
                 //  convertCurrency=list.get(position);
                 // convertCurrency=convertCurrency+"to";
                 //    Toast.makeText(getBaseContext(), "first", Toast.LENGTH_SHORT).show();
@@ -285,8 +287,9 @@ public class MainActivity extends AppCompatActivity {
 
 
          editCurrency.setText("" + 1+spFrom.getSelectedItem().toString());
+         txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
         Log.d("edittext val", "" + editCurrency.getText());
-        Toast.makeText(getBaseContext(),editCurrency.getText(),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getBaseContext(),editCurrency.getText(),Toast.LENGTH_SHORT).show();
 
       //  editCurrency.setOnContextClickListener(ON);
 
@@ -326,6 +329,64 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void keypadClick(View view) {
+
+
+        switch (view.getId()){
+            case R.id.button_one :
+                num=num+1;
+                break;
+            case R.id.button_two :
+                num=num+2;
+                break;
+            case R.id.button_three :
+                num=num+3;
+                break;
+            case R.id.button_four :
+                num=num+4;
+                break;
+            case R.id.button_five :
+                num=num+5;
+                break;
+            case R.id.button_six :
+                num=num+6;
+                break;
+            case R.id.button_seven :
+                num=num+7;
+                break;
+            case R.id.button_eight :
+                num=num+8;
+                break;
+            case R.id.button_nine :
+                num=num+9;
+                break;
+            case R.id.button_zero :
+                num=num+0;
+                break;
+            case R.id.button_point :
+                num=num+".";
+                break;
+            case R.id.button_back :
+                num=num.substring(0, num.length()-1);
+                if (num.length()==0)
+                    num="0";
+                break;
+            case R.id.button_clear :
+               // double fval = Double.parseDouble(num);
+              //  Toast.makeText(getBaseContext(),fval+"",Toast.LENGTH_SHORT).show();
+                num="0";
+                break;
+        }
+
+        if(num!="0")
+            num = num.startsWith("0")?num.substring(1):num;
+
+        txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
+
+
+
+
+    }
 
 
     public class GetCurrencyVal extends AsyncTask<String, String, String> {
@@ -349,9 +410,11 @@ public class MainActivity extends AppCompatActivity {
 
                 currency = Double.parseDouble(str);
                 cval=currency;
-                Toast.makeText(getBaseContext(),currency+"",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getBaseContext(),currency+"",Toast.LENGTH_SHORT).show();
                 Log.d("firstcur", currency + "");
-                currency = currency * (Double.parseDouble(currencyStr));
+               // currency = currency * (Double.parseDouble(currencyStr));
+                if(num!="")
+                    currency = (Double.parseDouble(num)) * (Double.parseDouble(currencyStr));
 
                 Log.d("currency val", "" + format.format(currency));
 
@@ -360,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
                 currencyStr = NumberFormat.getInstance().format(currency);
                 txtCurrency.setText(currencyStr+spTo.getSelectedItem().toString());
-                editCurrency.setText("" + cval+spFrom.getSelectedItem().toString());
+                editCurrency.setText("" + cval+" "+spFrom.getSelectedItem().toString());
 
                // .getCurrencyInstance().format(currency)
             //    Toast.makeText(getBaseContext(),NumberFormat.getInstance().format(currency),Toast.LENGTH_SHORT).show();
