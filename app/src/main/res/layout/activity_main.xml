@@ -21,7 +21,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17000002">
+        app:layout_constraintVertical_bias="0.13">
 
         <Spinner
             android:id="@+id/spinner2"
@@ -39,25 +39,33 @@
             android:padding="10dp"
             android:text="@string/to"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="invisible" />
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/textView2" />
+            android:layout_marginEnd="10dp" />
 
         <Button
             android:id="@+id/button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/spinner"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
             android:background="@drawable/roundedbutton"
             android:onClick="covertion"
-            android:text="@string/convert" />
+            android:text="@string/convert"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:onClick="swapcurrency"
+            app:srcCompat="@drawable/ic_swap_horiz_black_24dp" />
 
     </RelativeLayout>
 
@@ -109,7 +117,7 @@
             android:layout_marginRight="1dp"
             android:gravity="center"
             android:text=""
-            android:textSize="30dp" />
+            android:textSize="40dp" />
     </LinearLayout>
 
     <RelativeLayout
@@ -165,7 +173,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        app:layout_constraintVertical_bias="0.53">
+        app:layout_constraintVertical_bias="0.65999997">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -331,8 +339,8 @@
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@drawable/keypad_button"
-                android:onClick="keypadClick"
-                android:text="@string/clear" />
+                android:onClick="convertcur"
+                android:text="@string/go" />
         </LinearLayout>
 
     </LinearLayout>

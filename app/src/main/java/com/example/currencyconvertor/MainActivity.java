@@ -1,16 +1,22 @@
 package com.example.currencyconvertor;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -56,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
     Spinner spTo;
     Spinner spFrom;
     String num="1";
+    Button backButton;
+    int curFromName=0;
+    private static final String CurrencyFromName = "CURRENCY_FROM_NAME";
+    int curToName=0;
+    private static final String CurrencyToName = "CURRENCY_TO_NAME";
+
+
 
     ArrayAdapter<String> adpTo;
     // ArrayAdapter<String> adpFrom;
@@ -76,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
         txtSymbolTop = (TextView) findViewById(R.id.textView4);
         spTo = (Spinner) findViewById(R.id.spinner);
         spFrom = (Spinner) findViewById(R.id.spinner2);
+        backButton = (Button) findViewById(R.id.button_back);
+
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+
+        int defaulValue = 0;
+
+
+
+
 
         adpTo = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
 
@@ -257,6 +279,10 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 editCurrency.setText("" + cval+spFrom.getSelectedItem().toString());
                 txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
+                changeCurrencySize();
+                SharedPreferences.Editor editor= getPreferences(MODE_PRIVATE).edit();
+                editor.putInt(CurrencyFromName,spFrom.getSelectedItemPosition());
+                editor.apply();
                 //  convertCurrency=list.get(position);
                 // convertCurrency=convertCurrency+"to";
                 //    Toast.makeText(getBaseContext(), "first", Toast.LENGTH_SHORT).show();
@@ -273,6 +299,9 @@ public class MainActivity extends AppCompatActivity {
         spTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SharedPreferences.Editor editor= getPreferences(MODE_PRIVATE).edit();
+                editor.putInt(CurrencyToName,spTo.getSelectedItemPosition());
+                editor.apply();
                 // convertCurrency=convertCurrency+list.get(position);
                 //   Toast.makeText(getBaseContext(), "second", Toast.LENGTH_SHORT).show();
             }
@@ -280,18 +309,41 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 //  convertCurrency=convertCurrency+list.get(0);
-                spTo.setSelection(1);
+                spTo.setSelection(0);
                 //   Toast.makeText(getBaseContext(), "secondnotselect", Toast.LENGTH_SHORT).show();
             }
         });
 
+        curFromName=sharedPreferences.getInt(CurrencyFromName,defaulValue);
+
+        spFrom.setSelection(curFromName);
+
+        curToName=sharedPreferences.getInt(CurrencyToName,defaulValue);
+
+        spTo.setSelection(curToName);
+
+        convertCurrencyToOther();
 
          editCurrency.setText("" + 1+spFrom.getSelectedItem().toString());
          txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
+        changeCurrencySize();
         Log.d("edittext val", "" + editCurrency.getText());
        // Toast.makeText(getBaseContext(),editCurrency.getText(),Toast.LENGTH_SHORT).show();
 
       //  editCurrency.setOnContextClickListener(ON);
+
+        backButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                txtSymbolTop.setText("0 "+spFrom.getSelectedItem().toString());
+                changeCurrencySize();
+                txtCurrency.setText("0 "+spTo.getSelectedItem().toString());
+                changeToCurrencySize();
+                num="1";
+                return false;
+            }
+        });
 
     }
 
@@ -308,19 +360,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
         convertCurrency = spFrom.getSelectedItem().toString() + "_" + spTo.getSelectedItem().toString();
-        // Toast.makeText(getBaseContext(), "cc="+convertCurrency, Toast.LENGTH_SHORT).show();
-        Log.d("cc", "" + convertCurrency);
-        Log.d("val", values.get(0));
-        Log.d("cur", currency + "");
-       /* if (convertCurrency.equals(values.get(0))) {
-            currency = currency * 69.996904;
-            Log.d("firr", currency + "");
-        } else if (convertCurrency.equals(values.get(1))) {
-            currency = currency * 0.014;
-        }
-        Log.d("currr", currency + "");
-        txtCurrency.setText("" + currency);
-        currency = 1;*/
 
 
         GetCurrencyVal task = new GetCurrencyVal();
@@ -331,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void keypadClick(View view) {
 
-
+    if(num.length()<=9){
         switch (view.getId()){
             case R.id.button_one :
                 num=num+1;
@@ -371,21 +410,60 @@ public class MainActivity extends AppCompatActivity {
                 if (num.length()==0)
                     num="0";
                 break;
-            case R.id.button_clear :
-               // double fval = Double.parseDouble(num);
-              //  Toast.makeText(getBaseContext(),fval+"",Toast.LENGTH_SHORT).show();
-                num="0";
-                break;
+
         }
 
         if(num!="0")
             num = num.startsWith("0")?num.substring(1):num;
 
         txtSymbolTop.setText(num+" "+spFrom.getSelectedItem().toString());
+        changeCurrencySize();
+      //  SpannableStringBuilder spanTxt = new SpannableStringBuilder(txtSymbolTop.getText());
+       // spanTxt.setSpan(new RelativeSizeSpan(0.5f), spanTxt.length() - 3, spanTxt.length(), 0  );
+      //  txtSymbolTop.setText(spanTxt);
+
+    }
+    else {
+        Toast.makeText(getBaseContext(),"Maximum Limit Exceeds", Toast.LENGTH_SHORT).show();
+    }
 
 
 
+    }
 
+    public void changeCurrencySize(){
+        SpannableStringBuilder spanTxt = new SpannableStringBuilder(txtSymbolTop.getText());
+        spanTxt.setSpan(new RelativeSizeSpan(0.5f), spanTxt.length() - 3, spanTxt.length(), 0  );
+        txtSymbolTop.setText(spanTxt);
+    }
+
+    public void changeToCurrencySize(){
+        SpannableStringBuilder spanTxt = new SpannableStringBuilder(txtCurrency.getText());
+        spanTxt.setSpan(new RelativeSizeSpan(0.5f), spanTxt.length() - 3, spanTxt.length(), 0  );
+        txtCurrency.setText(spanTxt);
+    }
+
+    public void convertCurrencyToOther(){
+        convertCurrency = spFrom.getSelectedItem().toString() + "_" + spTo.getSelectedItem().toString();
+
+
+        GetCurrencyVal task = new GetCurrencyVal();
+        task.execute();
+    }
+
+    public void convertcur(View view) {
+        convertCurrencyToOther();
+
+
+    }
+
+    public void swapcurrency(View view) {
+        int curloc=0;
+        //spTo.setSelection()=spFrom.getSelectedItem().toString();
+        curloc=spTo.getSelectedItemPosition();
+        spTo.setSelection(spFrom.getSelectedItemPosition());
+        spFrom.setSelection(curloc);
+        convertCurrencyToOther();
     }
 
 
@@ -418,30 +496,17 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("currency val", "" + format.format(currency));
 
-               // txtSymbolTop.setText(spFrom.getSelectedItem().toString());
-               // txtSymbol.setText(spTo.getSelectedItem().toString());
 
                 currencyStr = NumberFormat.getInstance().format(currency);
-                txtCurrency.setText(currencyStr+spTo.getSelectedItem().toString());
+                txtCurrency.setText(currencyStr+" "+spTo.getSelectedItem().toString());
                 editCurrency.setText("" + cval+" "+spFrom.getSelectedItem().toString());
+                changeToCurrencySize();
 
-               // .getCurrencyInstance().format(currency)
-            //    Toast.makeText(getBaseContext(),NumberFormat.getInstance().format(currency),Toast.LENGTH_SHORT).show();
-              //  NumberFormat.getNumberInstance(Locale.getDefault()).format(currency);
-             //   Toast.makeText(getBaseContext(),String.format("%,d","a"+currency),Toast.LENGTH_SHORT).show();
                 convertCurrency = "";
                 currencyStr="";
             }
             catch (Exception e){
-             //   AlertDialog.Builder builder1  = new AlertDialog.Builder(this);
-//                builder1.setMessage("No Internet Connection..");
-//                builder1.setCancelable(true);
-//                builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                    }
-//                });
+
                 Toast.makeText(getBaseContext(), "No Internet Connection..", Toast.LENGTH_SHORT).show();
 
             }
