@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         editCurrency = (EditText) findViewById(R.id.editText);
         txtCurrency = (TextView) findViewById(R.id.textView);
-        txtSymbol = (TextView) findViewById(R.id.textView3);
         txtSymbolTop = (TextView) findViewById(R.id.textView4);
         spTo = (Spinner) findViewById(R.id.spinner);
         spFrom = (Spinner) findViewById(R.id.spinner2);
