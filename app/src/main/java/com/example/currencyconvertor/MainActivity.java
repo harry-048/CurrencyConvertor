@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor= getPreferences(MODE_PRIVATE).edit();
                 editor.putInt(CurrencyFromName,spFrom.getSelectedItemPosition());
                 editor.apply();
+                convertCurrencyToOther();
                 //  convertCurrency=list.get(position);
                 // convertCurrency=convertCurrency+"to";
                 //    Toast.makeText(getBaseContext(), "first", Toast.LENGTH_SHORT).show();
@@ -302,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor= getPreferences(MODE_PRIVATE).edit();
                 editor.putInt(CurrencyToName,spTo.getSelectedItemPosition());
                 editor.apply();
+                convertCurrencyToOther();
                 // convertCurrency=convertCurrency+list.get(position);
                 //   Toast.makeText(getBaseContext(), "second", Toast.LENGTH_SHORT).show();
             }
